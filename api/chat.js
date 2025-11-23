@@ -1,7 +1,12 @@
-import { GoogleGenerativeAI } from "@google/genai";
+import { GoogleGenAI } from "@google/genai";
+
+const ai = new GoogleGenAI({
+  apiKey: process.env.GEMINI_API_KEY, // from Vercel env
+  // vertexai: false  // using normal Gemini API, not Vertex
+});
 
 export default async function handler(req, res) {
-  // CORS
+  // CORS headers so your Hostinger frontend can call this API
   res.setHeader("Access-Control-Allow-Origin", "*");
   res.setHeader("Access-Control-Allow-Methods", "POST, OPTIONS");
   res.setHeader("Access-Control-Allow-Headers", "Content-Type");
@@ -21,11 +26,12 @@ export default async function handler(req, res) {
       return res.status(400).json({ error: "message is required" });
     }
 
-    const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
-    const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash" });
+    const response = await ai.models.generateContent({
+      model: "gemini-2.5-flash", // or "gemini-2.0-flash" if you prefer
+      contents: message,
+    });
 
-    const result = await model.generateContent(message);
-    const reply = result.response.text();
+    const reply = response.text;
 
     return res.status(200).json({ reply });
   } catch (error) {
