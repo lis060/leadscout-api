@@ -1,7 +1,7 @@
 import { GoogleGenerativeAI } from "@google/genai";
 
 export default async function handler(req, res) {
-  // CORS headers so your Hostinger frontend can call this API
+  // CORS
   res.setHeader("Access-Control-Allow-Origin", "*");
   res.setHeader("Access-Control-Allow-Methods", "POST, OPTIONS");
   res.setHeader("Access-Control-Allow-Headers", "Content-Type");
@@ -28,8 +28,8 @@ export default async function handler(req, res) {
     const reply = result.response.text();
 
     return res.status(200).json({ reply });
-  } catch (err) {
-    console.error("Gemini error:", err);
-    return res.status(500).json({ error: "Something went wrong" });
+  } catch (error) {
+    console.error("Gemini error:", error);
+    return res.status(500).json({ error: "Internal server error" });
   }
 }
